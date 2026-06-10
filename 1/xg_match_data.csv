@@ -1,0 +1,129 @@
+home_team,away_team,home_goals,away_goals,home_actual,away_actual,date
+Canada,Morocco,1.0956,0.4264,1,2,2022-12-01
+England,Iran,1.9872,1.4557,6,2,2022-11-21
+Croatia,Belgium,0.695,2.3818,0,0,2022-12-01
+Netherlands,Ecuador,0.1045,1.6511,1,1,2022-11-25
+Japan,Spain,1.1578,0.8577,2,1,2022-12-01
+England,United States,0.4606,0.5143,0,0,2022-11-25
+Iran,United States,0.9208,1.1697,0,1,2022-11-29
+Morocco,Croatia,0.3626,0.8499,0,0,2022-11-23
+Wales,Iran,0.6156,1.454,0,2,2022-11-25
+Tunisia,France,0.2983,0.477,1,0,2022-11-30
+Wales,England,0.208,2.9155,0,3,2022-11-29
+Switzerland,Cameroon,1.4265,0.6131,1,0,2022-11-24
+Portugal,Ghana,2.0969,0.78,3,2,2022-11-24
+Senegal,Netherlands,0.6915,1.1239,0,2,2022-11-21
+United States,Wales,0.6025,1.3953,1,1,2022-11-21
+Poland,Saudi Arabia,1.7342,1.972,2,0,2022-11-26
+Netherlands,Qatar,1.714,0.1437,2,0,2022-11-29
+France,Denmark,1.9336,0.8885,2,1,2022-11-26
+Germany,Japan,2.768,1.2493,1,2,2022-11-23
+Denmark,Tunisia,1.5666,1.0599,0,0,2022-11-22
+Mexico,Poland,0.5291,1.1379,0,0,2022-11-22
+Qatar,Senegal,0.9601,0.903,1,3,2022-11-25
+Belgium,Canada,0.67,2.5462,1,0,2022-11-23
+Brazil,Switzerland,0.9227,0.2886,1,0,2022-11-28
+Netherlands,Argentina,4.487,5.8567,2,2,2022-12-09
+Costa Rica,Germany,1.0347,4.3161,2,4,2022-12-01
+Japan,Costa Rica,0.7735,0.1994,0,1,2022-11-27
+Argentina,France,5.8923,5.4066,3,3,2022-12-18
+Croatia,Morocco,0.8493,0.9915,2,1,2022-12-17
+Serbia,Switzerland,1.189,3.1035,2,3,2022-12-02
+Argentina,Australia,1.4816,0.4261,2,1,2022-12-03
+Australia,Denmark,0.4697,0.7372,1,0,2022-11-30
+Brazil,Serbia,2.1239,0.1633,2,0,2022-11-24
+Tunisia,Australia,1.0522,0.359,0,1,2022-11-26
+Ecuador,Senegal,1.0017,1.7075,1,2,2022-11-29
+Uruguay,South Korea,0.4173,0.493,0,0,2022-11-24
+Morocco,Portugal,0.972,0.7441,1,0,2022-12-10
+Saudi Arabia,Mexico,1.0761,2.3221,1,2,2022-11-30
+Poland,Argentina,0.1976,3.0767,0,2,2022-11-30
+Argentina,Mexico,0.3252,0.2064,2,0,2022-11-26
+Portugal,Switzerland,2.2843,1.2718,6,1,2022-12-06
+England,Senegal,1.02,0.9728,3,0,2022-12-04
+Argentina,Croatia,1.8644,0.4101,3,0,2022-12-13
+England,France,2.3526,0.8394,1,2,2022-12-10
+France,Morocco,2.0024,1.2304,2,0,2022-12-14
+Croatia,Brazil,3.7669,4.9503,1,1,2022-12-09
+Morocco,Spain,3.7044,2.8455,0,0,2022-12-06
+Japan,Croatia,4.203,3.9884,1,1,2022-12-05
+Brazil,South Korea,3.2614,0.3448,4,1,2022-12-05
+France,Poland,1.1264,1.5935,3,1,2022-12-04
+Netherlands,United States,1.4819,1.6521,3,1,2022-12-03
+Portugal,Uruguay,1.2137,1.2167,2,0,2022-11-28
+Spain,Germany,0.6395,1.147,1,1,2022-11-27
+Cameroon,Serbia,2.0703,1.7381,3,3,2022-11-28
+Belgium,Morocco,0.6426,0.9911,0,2,2022-11-27
+Qatar,Ecuador,0.3042,1.154,0,2,2022-11-20
+Argentina,Saudi Arabia,2.4916,0.1535,1,2,2022-11-22
+South Korea,Ghana,1.3678,1.1805,2,3,2022-11-28
+Ghana,Uruguay,1.3927,1.6366,0,2,2022-12-02
+Spain,Costa Rica,2.7619,0.0,7,0,2022-11-23
+Croatia,Canada,2.6102,0.2868,4,1,2022-11-27
+Cameroon,Brazil,0.3834,2.3782,1,0,2022-12-02
+France,Australia,3.1705,0.3233,4,1,2022-11-22
+South Korea,Portugal,1.399,0.9737,2,1,2022-12-02
+Brazil,Belgium,2.6092,0.4053,1,2,2018-07-06
+Belgium,Japan,2.9178,0.6938,3,2,2018-07-02
+England,Panama,3.1683,1.08,6,1,2018-06-24
+Poland,Senegal,1.0423,1.4278,1,2,2018-06-19
+Serbia,Switzerland,1.1535,1.5573,1,2,2018-06-22
+Sweden,South Korea,2.0151,0.4144,1,0,2018-06-18
+Germany,Mexico,2.2993,0.9933,0,1,2018-06-17
+Iran,Spain,0.4265,2.197,0,1,2018-06-20
+Uruguay,Saudi Arabia,1.8074,0.2735,1,0,2018-06-20
+France,Peru,1.8624,0.6252,1,0,2018-06-21
+Argentina,Croatia,1.2181,1.8317,0,3,2018-06-21
+Colombia,England,4.7487,6.1618,1,1,2018-07-03
+Panama,Tunisia,0.6908,2.8525,1,2,2018-06-28
+Japan,Poland,0.8906,1.0407,0,1,2018-06-28
+Iceland,Croatia,2.1327,0.6739,1,2,2018-06-26
+Russia,Egypt,0.9812,1.6975,3,1,2018-06-19
+Argentina,Iceland,2.0805,1.0321,1,1,2018-06-16
+England,Belgium,1.2007,0.9653,0,1,2018-06-28
+Sweden,Switzerland,0.9105,0.533,1,0,2018-07-03
+Iran,Portugal,1.577,1.5224,1,1,2018-06-25
+Portugal,Morocco,0.885,1.4551,1,0,2018-06-20
+Croatia,England,2.1413,0.5467,2,1,2018-07-11
+Brazil,Costa Rica,3.0964,0.1587,2,0,2018-06-22
+Egypt,Uruguay,0.3645,1.9408,0,1,2018-06-15
+South Korea,Mexico,0.8218,1.8776,1,2,2018-06-23
+Belgium,Panama,1.2121,0.6254,3,0,2018-06-18
+Poland,Colombia,1.1142,1.3869,0,3,2018-06-24
+Portugal,Spain,1.4346,1.6609,3,3,2018-06-15
+Serbia,Brazil,0.9483,1.4198,0,2,2018-06-27
+Germany,Sweden,1.3181,0.8152,2,1,2018-06-23
+Tunisia,England,0.9457,2.6264,1,2,2018-06-18
+France,Argentina,1.638,1.4466,4,3,2018-06-30
+Croatia,Denmark,6.0877,4.614,1,1,2018-07-01
+Nigeria,Iceland,1.3122,1.5522,2,0,2018-06-22
+Croatia,Nigeria,1.6945,0.7623,2,0,2018-06-16
+Australia,Peru,1.6293,0.3364,0,2,2018-06-26
+Senegal,Colombia,0.3609,0.2849,0,1,2018-06-28
+Switzerland,Costa Rica,1.2197,1.5762,2,2,2018-06-27
+France,Australia,1.5616,0.98,2,1,2018-06-16
+Uruguay,Russia,2.4826,0.1802,3,0,2018-06-25
+Brazil,Mexico,3.3204,0.5828,2,0,2018-07-02
+Denmark,Australia,1.0144,1.4122,1,1,2018-06-21
+Costa Rica,Serbia,0.596,1.9926,0,1,2018-06-17
+Uruguay,France,0.6932,0.5388,0,2,2018-07-06
+France,Croatia,1.098,1.4803,4,2,2018-07-15
+Spain,Russia,5.3586,4.5404,1,1,2018-07-01
+Belgium,Tunisia,5.3364,1.1882,5,2,2018-06-23
+Peru,Denmark,1.9264,1.1216,0,1,2018-06-16
+Spain,Morocco,2.6045,1.0718,2,2,2018-06-25
+Brazil,Switzerland,1.8666,0.4721,1,1,2018-06-17
+Nigeria,Argentina,1.3053,0.8506,1,2,2018-06-26
+Uruguay,Portugal,0.476,0.9956,2,1,2018-06-30
+Morocco,Iran,1.0592,0.6976,0,1,2018-06-15
+Russia,Saudi Arabia,1.2816,0.2488,5,0,2018-06-14
+Mexico,Sweden,1.6107,2.7905,0,3,2018-06-27
+Sweden,England,0.8342,0.7582,0,2,2018-07-07
+South Korea,Germany,1.7746,2.7064,2,0,2018-06-27
+Colombia,Japan,0.8063,2.3207,1,2,2018-06-19
+France,Belgium,1.6817,0.5669,1,0,2018-07-10
+Belgium,England,1.3207,1.3354,2,0,2018-07-14
+Russia,Croatia,4.9884,5.568,2,2,2018-07-07
+Denmark,France,0.139,0.4181,0,0,2018-06-26
+Japan,Senegal,0.9822,1.8783,2,2,2018-06-24
+Saudi Arabia,Egypt,2.5458,0.9237,2,1,2018-06-25

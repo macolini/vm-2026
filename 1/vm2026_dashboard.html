@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VM 2026 — Betting HQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root {
+  --bg:#080810;--s1:#0d0d18;--s2:#12121f;--border:#1a1a2e;--border2:#252540;
+  --green:#00e87a;--gold:#ffd166;--blue:#4fc3f7;--red:#ff5c5c;
+  --muted:#3a3a60;--text:#dde1ff;--sub:#5a5a90;--white:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--white);}
+.nav-logo span{color:var(--green);}
+.nav-tabs{display:flex;gap:2px;}
+.tab-btn{background:transparent;border:none;color:var(--sub);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+.nav-right{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);}
+.nav-right strong{color:var(--gold);}
+.view{display:none;padding:28px 24px;max-width:1080px;margin:0 auto;}
+.view.active{display:block;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+.sec-title{font-size:18px;font-weight:600;color:var(--white);}
+.sec-sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);}
+.player-setup{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:20px;}
+.player-card{background:var(--s1);border:1px solid var(--border);padding:16px;}
+.pc-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;}
+.pc-name{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:7px 10px;margin-bottom:8px;outline:none;}
+.pc-name:focus{border-color:var(--green);}
+.pc-bank-row{display:flex;align-items:center;gap:8px;}
+.pc-bank{flex:1;background:var(--bg);border:1px solid var(--border2);color:var(--green);font-family:'Space Mono',monospace;font-size:16px;font-weight:700;padding:7px 10px;outline:none;}
+.pc-bank:focus{border-color:var(--green);}
+.pc-kr{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:24px;}
+.stat-box{background:var(--s1);border:1px solid var(--border);padding:14px 16px;}
+.stat-val{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--green);margin-bottom:4px;}
+.stat-val.gold{color:var(--gold);}
+.stat-val.blue{color:var(--blue);}
+.stat-lbl{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.1em;}
+/* Match table */
+.mtable{width:100%;border-collapse:collapse;}
+.mtable th{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+.mtable td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.mtable tr:hover td{background:var(--s1);}
+.mt-match{font-weight:600;font-size:13px;}
+.mt-sub{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);margin-top:2px;}
+.tag{display:inline-block;font-family:'Space Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid;}
+.tag-H{border-color:#334477;color:#7799ff;background:#05050f;}
+.tag-X{border-color:#443300;color:var(--gold);background:#0a0800;}
+.tag-B{border-color:#003322;color:var(--green);background:#00100a;}
+.ev-val{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.ev-val.pos{color:var(--green);}
+.ev-val.neg{color:var(--muted);}
+.payout-cell{font-family:'Space Mono',monospace;font-size:12px;}
+.p-ins{color:var(--sub);}
+.p-vin{color:var(--green);font-weight:700;}
+.p-vin.zero{color:var(--muted);}
+.qbadge{font-family:'Space Mono',monospace;font-size:10px;padding:2px 6px;}
+.q-full{color:var(--green);}
+.q-half{color:var(--gold);}
+.q-none{color:var(--red);}
+/* VM Tipset */
+.ktable{width:100%;border-collapse:collapse;}
+.ktable th{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+.ktable td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;}
+.ktable tr:hover td{background:var(--s1);}
+.spik{color:var(--gold);font-family:'Space Mono',monospace;font-size:12px;font-weight:700;}
+.gard{color:var(--blue);font-family:'Space Mono',monospace;font-size:12px;}
+.win-table{width:100%;border-collapse:collapse;}
+.win-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:13px;}
+.win-lbl{color:var(--sub);}
+.win-tot{color:var(--white);font-weight:700;}
+.win-per{color:var(--green);font-weight:700;}
+/* Kombi */
+.kombi-box{background:var(--s1);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.kombi-odds{font-family:'Space Mono',monospace;font-size:48px;font-weight:700;color:var(--green);line-height:1;}
+.kombi-sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:20px;}
+.kombi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.kombi-player{background:var(--bg);border:1px solid var(--border);padding:14px;}
+.kp-name{font-size:13px;font-weight:600;margin-bottom:10px;}
+.kp-ins-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.kp-ins{flex:1;background:var(--s1);border:1px solid var(--border2);color:var(--gold);font-family:'Space Mono',monospace;font-size:16px;font-weight:700;padding:6px 10px;outline:none;width:100%;}
+.kp-ins:focus{border-color:var(--gold);}
+.kp-vinst{font-family:'Space Mono',monospace;font-size:13px;color:var(--green);}
+.kp-vinst-lbl{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+/* Combined */
+.comb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:16px;}
+.comb-player{background:var(--s1);border:1px solid var(--border);padding:20px;}
+.cp-name{font-size:15px;font-weight:600;color:var(--white);margin-bottom:16px;}
+.cp-section{margin-bottom:14px;}
+.cp-sec-title{font-family:'Space Mono',monospace;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.cp-row{display:flex;justify-content:space-between;margin-bottom:5px;}
+.cp-lbl{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);}
+.cp-val{font-family:'Space Mono',monospace;font-size:11px;color:var(--text);}
+.cp-total{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;}
+.cp-total .cp-val{color:var(--gold);font-size:15px;font-weight:700;}
+.footer{margin-top:24px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">VM<span>2026</span> · BETTING HQ</div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('odds',this)">Odds Betting</button>
+    <button class="tab-btn" onclick="switchTab('vmtipset',this)">VM-Tipset</button>
+    <button class="tab-btn" onclick="switchTab('kombi',this)">Kombibett</button>
+    <button class="tab-btn" onclick="switchTab('combined',this)">Samlad vy</button>
+  </div>
+  <div class="nav-right">Omgång <strong>1</strong> · Stopp <strong>11 jun 20:59</strong></div>
+</nav>
+
+<!-- ODDS BETTING -->
+<div class="view active" id="view-odds">
+  <div class="sec-head"><div class="sec-title">Odds Betting</div><div class="sec-sub">Kelly 1/4 · Dixon-Coles xG · Egna insatser</div></div>
+  <div class="player-setup">
+    <div class="player-card"><div class="pc-label">Spelare 1</div><input class="pc-name" id="o-n0" value="Du" oninput="renderOdds()"><div class="pc-bank-row"><input class="pc-bank" type="number" id="o-b0" value="5000" min="100" step="500" oninput="renderOdds()"><span class="pc-kr">kr</span></div></div>
+    <div class="player-card"><div class="pc-label">Spelare 2</div><input class="pc-name" id="o-n1" value="Spelare 2" oninput="renderOdds()"><div class="pc-bank-row"><input class="pc-bank" type="number" id="o-b1" value="5000" min="100" step="500" oninput="renderOdds()"><span class="pc-kr">kr</span></div></div>
+    <div class="player-card"><div class="pc-label">Spelare 3</div><input class="pc-name" id="o-n2" value="Spelare 3" oninput="renderOdds()"><div class="pc-bank-row"><input class="pc-bank" type="number" id="o-b2" value="5000" min="100" step="500" oninput="renderOdds()"><span class="pc-kr">kr</span></div></div>
+  </div>
+  <div class="stat-row" id="o-stats"></div>
+  <table class="mtable">
+    <thead><tr><th>Match</th><th>Bästa spel</th><th>EV</th><th>xG</th><th>Data</th><th id="oh0">Du</th><th id="oh1">S2</th><th id="oh2">S3</th></tr></thead>
+    <tbody id="o-body"></tbody>
+  </table>
+  <div class="footer">⚠ EV baserat på xG-modell tränad på VM 2018+2022. Okända lag = liga-snitt (lägre tillit). Varje person spelar på eget konto. 18+ · Stodlinjen.se</div>
+</div>
+
+<!-- VM-TIPSET -->
+<div class="view" id="view-vmtipset">
+  <div class="sec-head"><div class="sec-title">VM-Tipset · Syndikatsystem</div><div class="sec-sub">3 spelare · 192 kr var · Spelstopp 11 jun 20:59</div></div>
+  <div class="player-setup">
+    <div class="player-card"><div class="pc-label">Spelare A — Favorit</div><input class="pc-name" id="v-n0" value="Du" oninput="renderVM()"><div style="background:var(--bg);border:1px solid var(--border2);padding:8px 10px;"><span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold)">192 kr · 192 rader</span></div></div>
+    <div class="player-card"><div class="pc-label">Spelare B — Kryss</div><input class="pc-name" id="v-n1" value="Spelare 2" oninput="renderVM()"><div style="background:var(--bg);border:1px solid var(--border2);padding:8px 10px;"><span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold)">192 kr · 192 rader</span></div></div>
+    <div class="player-card"><div class="pc-label">Spelare C — Skräll</div><input class="pc-name" id="v-n2" value="Spelare 3" oninput="renderVM()"><div style="background:var(--bg);border:1px solid var(--border2);padding:8px 10px;"><span style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold)">192 kr · 192 rader</span></div></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-val gold">576 kr</div><div class="stat-lbl">Total insats</div></div>
+    <div class="stat-box"><div class="stat-val">2.83%</div><div class="stat-lbl">Vinnarchans (1 på 35)</div></div>
+    <div class="stat-box"><div class="stat-val">15.2%</div><div class="stat-lbl">Chans 12 rätt (1 på 6)</div></div>
+    <div class="stat-box"><div class="stat-val blue">5 000 000</div><div class="stat-lbl">Jackpot (kr)</div></div>
+  </div>
+  <div class="sec-head"><div class="sec-title" style="font-size:15px">Tecken per spelare</div></div>
+  <table class="ktable" id="v-table"></table>
+  <div class="sec-head" style="margin-top:24px"><div class="sec-title" style="font-size:15px">Vinstpotential ÷ 3</div></div>
+  <div style="background:var(--s1);border:1px solid var(--border)">
+    <table class="win-table">
+      <tr><td class="win-lbl">13 rätt</td><td class="win-tot">~6 800 000 kr</td><td class="win-per" id="w13">~2 267 000 kr var</td></tr>
+      <tr><td class="win-lbl">12 rätt</td><td class="win-tot">~450 000 kr</td><td class="win-per">~150 000 kr var</td></tr>
+      <tr><td class="win-lbl">11 rätt</td><td class="win-tot">~325 000 kr</td><td class="win-per">~108 000 kr var</td></tr>
+      <tr><td class="win-lbl">10 rätt</td><td class="win-tot">~175 000 kr</td><td class="win-per">~58 000 kr var</td></tr>
+    </table>
+  </div>
+  <div class="footer">⚠ Skriv ett avtal: "Vi delar all vinst lika oavsett vem som vinner — VM-tipset vecka 24, 11 juni 2026." · Varje person loggar in med eget BankID.</div>
+</div>
+
+<!-- KOMBIBETT -->
+<div class="view" id="view-kombi">
+  <div class="sec-head"><div class="sec-title">Kombibett · Trettonling</div><div class="sec-sub">Alla 13 matcher måste gå in · Egna konton</div></div>
+  <div class="kombi-box">
+    <div class="kombi-odds">547.8x</div>
+    <div class="kombi-sub">Totala odds · Alla 13 matcher kombinerade · ~0.3% chans att allt går in</div>
+    <div class="kombi-grid" id="k-grid"></div>
+  </div>
+  <div class="sec-head"><div class="sec-title" style="font-size:15px">Matcherna i kombibetten</div></div>
+  <table class="ktable">
+    <thead><tr><th>Nr</th><th>Match</th><th>Modell säger</th><th>Chans</th><th>Odds</th></tr></thead>
+    <tbody id="k-table"></tbody>
+  </table>
+  <div class="footer">⚠ Varje person lägger sin egna trettonling på valfritt spelbolag (Unibet, Betsson etc). Ingen delning — var och en äger sin kupong. 18+ · Stodlinjen.se</div>
+</div>
+
+<!-- SAMLAD VY -->
+<div class="view" id="view-combined">
+  <div class="sec-head"><div class="sec-title">Samlad vy</div><div class="sec-sub">Alla tre spår · Per person</div></div>
+  <div class="stat-row" id="c-stats"></div>
+  <div class="comb-grid" id="c-grid"></div>
+  <div class="footer">Odds betting och VM-tipset är separata system. Kombibetten är ett lotteri-spel vid sidan av.</div>
+</div>
+
+<script>
+const MATCHES = [
+  {nr:1,match:'Mexiko - Sydafrika',xg_h:1.38,xg_a:1.35,ph:0.379,pd:0.257,pa:0.364,oh:1.44,od:3.80,oa:7.00,ev_h:-0.454,ev_d:-0.024,ev_a:1.549,kh:0,kd:0,ka:0.0645,q:'half'},
+  {nr:2,match:'Sydkorea - Tjeckien',xg_h:1.12,xg_a:1.42,ph:0.298,pd:0.264,pa:0.438,oh:2.20,od:3.20,oa:3.40,ev_h:-0.345,ev_d:-0.156,ev_a:0.490,kh:0,kd:0,ka:0.0511,q:'half'},
+  {nr:3,match:'Kanada - Bosnien',xg_h:1.56,xg_a:0.99,ph:0.505,pd:0.254,pa:0.240,oh:1.83,od:3.30,oa:3.60,ev_h:-0.076,ev_d:-0.160,ev_a:-0.134,kh:0,kd:0,ka:0,q:'half'},
+  {nr:4,match:'USA - Paraguay',xg_h:1.17,xg_a:0.85,ph:0.432,pd:0.301,pa:0.267,oh:1.97,od:3.50,oa:5.00,ev_h:-0.149,ev_d:0.054,ev_a:0.335,kh:0,kd:0.0054,ka:0.0209,q:'half'},
+  {nr:5,match:'Brasilien - Marocko',xg_h:2.66,xg_a:0.66,ph:0.796,pd:0.134,pa:0.069,oh:1.68,od:3.40,oa:4.20,ev_h:0.337,ev_d:-0.545,ev_a:-0.711,kh:0.1238,kd:0,ka:0,q:'full'},
+  {nr:6,match:'Australien - Turkiet',xg_h:0.95,xg_a:1.07,ph:0.316,pd:0.306,pa:0.378,oh:2.60,od:3.20,oa:2.80,ev_h:-0.178,ev_d:-0.021,ev_a:0.058,kh:0,kd:0,ka:0.0081,q:'half'},
+  {nr:7,match:'Nederländerna - Japan',xg_h:2.49,xg_a:2.20,ph:0.457,pd:0.188,pa:0.353,oh:2.08,od:3.60,oa:3.75,ev_h:-0.049,ev_d:-0.322,ev_a:0.323,kh:0,kd:0,ka:0.0293,q:'full'},
+  {nr:8,match:'Sverige - Tunisien',xg_h:2.10,xg_a:0.82,ph:0.670,pd:0.195,pa:0.135,oh:1.95,od:3.40,oa:4.50,ev_h:0.306,ev_d:-0.337,ev_a:-0.393,kh:0.0805,kd:0,ka:0,q:'full'},
+  {nr:9,match:'Elfenbenskusten - Ecuador',xg_h:0.61,xg_a:1.40,ph:0.162,pd:0.276,pa:0.562,oh:2.50,od:3.20,oa:2.90,ev_h:-0.594,ev_d:-0.117,ev_a:0.629,kh:0,kd:0,ka:0.0828,q:'half'},
+  {nr:10,match:'Belgien - Egypten',xg_h:2.32,xg_a:0.97,ph:0.675,pd:0.182,pa:0.142,oh:1.47,od:3.80,oa:5.50,ev_h:-0.008,ev_d:-0.309,ev_a:-0.217,kh:0,kd:0,ka:0,q:'full'},
+  {nr:11,match:'Frankrike - Senegal',xg_h:1.20,xg_a:1.08,ph:0.389,pd:0.284,pa:0.326,oh:1.44,od:3.80,oa:6.00,ev_h:-0.439,ev_d:0.081,ev_a:0.957,kh:0,kd:0.0072,ka:0.0478,q:'full'},
+  {nr:12,match:'Irak - Norge',xg_h:1.33,xg_a:1.23,ph:0.390,pd:0.266,pa:0.344,oh:4.00,od:3.20,oa:1.90,ev_h:0.560,ev_d:-0.148,ev_a:-0.347,kh:0.0467,kd:0,ka:0,q:'none'},
+  {nr:13,match:'Argentina - Algeriet',xg_h:2.87,xg_a:1.24,ph:0.706,pd:0.153,pa:0.138,oh:1.35,od:4.50,oa:8.00,ev_h:-0.046,ev_d:-0.313,ev_a:0.104,kh:0,kd:0,ka:0.0037,q:'half'},
+];
+
+const KUPONG = [
+  {nr:1,match:'Mexiko - Sydafrika',A:'1/X',B:'X/2',C:'2/X',spik:false},
+  {nr:2,match:'Sydkorea - Tjeckien',A:'2/X',B:'X/1',C:'1/2',spik:false},
+  {nr:3,match:'Kanada - Bosnien',A:'1/X',B:'1/X',C:'2/1',spik:false},
+  {nr:4,match:'USA - Paraguay',A:'1/X',B:'X/2',C:'2/1',spik:false},
+  {nr:5,match:'Brasilien - Marocko',A:'1',B:'1',C:'1',spik:true},
+  {nr:6,match:'Australien - Turkiet',A:'1/X/2',B:'1/X/2',C:'2/1/X',spik:false},
+  {nr:7,match:'Nederländerna - Japan',A:'1/2',B:'1/2',C:'2/1',spik:false},
+  {nr:8,match:'Sverige - Tunisien',A:'1',B:'1',C:'1',spik:true},
+  {nr:9,match:'Elfenbenskusten - Ecuador',A:'X/2',B:'X/1',C:'1/2',spik:false},
+  {nr:10,match:'Belgien - Egypten',A:'1',B:'1',C:'1',spik:true},
+  {nr:11,match:'Frankrike - Senegal',A:'1/X',B:'X/2',C:'1/X',spik:false},
+  {nr:12,match:'Irak - Norge',A:'2',B:'2',C:'2',spik:true},
+  {nr:13,match:'Argentina - Algeriet',A:'1',B:'1',C:'1',spik:true},
+];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='combined')renderCombined();
+  if(id==='kombi')renderKombi();
+}
+
+function getPlayers(){
+  return [0,1,2].map(i=>({
+    name:document.getElementById(`o-n${i}`).value||`Spelare ${i+1}`,
+    bank:parseFloat(document.getElementById(`o-b${i}`).value)||5000
+  }));
+}
+
+function fmt(n){return Math.round(n).toLocaleString('sv-SE')+' kr';}
+
+function bestSpel(m){
+  const evs=[{t:'H',e:m.ev_h,k:m.kh,o:m.oh},{t:'X',e:m.ev_d,k:m.kd,o:m.od},{t:'B',e:m.ev_a,k:m.ka,o:m.oa}];
+  return evs.filter(x=>x.e>0.03).sort((a,b)=>b.e-a.e)[0]||null;
+}
+
+function renderOdds(){
+  const players=getPlayers();
+  [0,1,2].forEach(i=>document.getElementById(`oh${i}`).textContent=players[i].name);
+  const body=document.getElementById('o-body');
+  body.innerHTML='';
+  const totals=players.map(()=>({ins:0}));
+  let evSpel=0;
+
+  MATCHES.forEach(m=>{
+    const best=bestSpel(m);
+    if(best)evSpel++;
+    const pCells=players.map((p,i)=>{
+      if(!best){totals[i].ins+=0;return`<td class="payout-cell"><span class="p-vin zero">—</span></td>`;}
+      const k=best.t==='H'?m.kh:best.t==='X'?m.kd:m.ka;
+      const ins=Math.round(p.bank*k);
+      totals[i].ins+=ins;
+      const vin=Math.round(ins*(best.o-1));
+      return`<td class="payout-cell"><div class="p-ins">${fmt(ins)}</div><div class="p-vin ${vin<=0?'zero':''}">+${fmt(vin)}</div></td>`;
+    }).join('');
+    const qLabel=m.q==='full'?'<span class="qbadge q-full">🟢 Full</span>':m.q==='half'?'<span class="qbadge q-half">🟡 Halv</span>':'<span class="qbadge q-none">🔴 Ingen</span>';
+    const evLabel=best?`<span class="ev-val pos">+${(best.e*100).toFixed(0)}%</span>`:`<span class="ev-val neg">Ingen edge</span>`;
+    const spelLabel=best?`<span class="tag tag-${best.t}">${best.t==='H'?'HEMMA':best.t==='X'?'KRYSS':'BORTA'} @${best.o}</span>`:'<span style="color:var(--muted);font-size:12px">—</span>';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><div class="mt-match">${m.match}</div><div class="mt-sub">xG: ${m.xg_h} - ${m.xg_a}</div></td><td>${spelLabel}</td><td>${evLabel}</td><td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--sub)">${m.xg_h} - ${m.xg_a}</td><td>${qLabel}</td>${pCells}`;
+    body.appendChild(tr);
+  });
+
+  document.getElementById('o-stats').innerHTML=`
+    <div class="stat-box"><div class="stat-val">${evSpel}</div><div class="stat-lbl">Spel med edge</div></div>
+    <div class="stat-box"><div class="stat-val gold">${fmt(totals[0].ins)}</div><div class="stat-lbl">${players[0].name} insats</div></div>
+    <div class="stat-box"><div class="stat-val gold">${fmt(totals[1].ins)}</div><div class="stat-lbl">${players[1].name} insats</div></div>
+    <div class="stat-box"><div class="stat-val gold">${fmt(totals[2].ins)}</div><div class="stat-lbl">${players[2].name} insats</div></div>
+  `;
+}
+
+function renderVM(){
+  const players=[0,1,2].map(i=>document.getElementById(`v-n${i}`).value||`Spelare ${i+1}`);
+  const table=document.getElementById('v-table');
+  table.innerHTML=`<thead><tr><th>Nr</th><th>Match</th><th>${players[0]} (A)</th><th>${players[1]} (B)</th><th>${players[2]} (C)</th></tr></thead>`;
+  const tbody=document.createElement('tbody');
+  KUPONG.forEach(k=>{
+    const tr=document.createElement('tr');
+    const spik=k.spik?' ⭐':'';
+    tr.innerHTML=`<td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--sub)">${k.nr}</td><td style="font-weight:500">${k.match}${spik}</td><td><span class="${k.spik?'spik':'gard'}">${k.A}</span></td><td><span class="${k.spik?'spik':'gard'}">${k.B}</span></td><td><span class="${k.spik?'spik':'gard'}">${k.C}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+}
+
+function renderKombi(){
+  const KOMBI_ODDS=547.8;
+  const grid=document.getElementById('k-grid');
+  const names=[0,1,2].map(i=>document.getElementById(`o-n${i}`).value||`Spelare ${i+1}`);
+  grid.innerHTML=['k-i0','k-i1','k-i2'].map((id,i)=>`
+    <div class="kombi-player">
+      <div class="kp-name">${names[i]}</div>
+      <div class="kp-ins-row"><input class="kp-ins" type="number" id="${id}" value="100" min="10" step="10" oninput="updateKombi()"><span class="pc-kr">kr</span></div>
+      <div class="kp-vinst-lbl">Vinst om alla går in</div>
+      <div class="kp-vinst" id="k-v${i}">54 780 kr</div>
+    </div>
+  `).join('');
+
+  const tbody=document.getElementById('k-table');
+  tbody.innerHTML='';
+  MATCHES.forEach(m=>{
+    const evs=[{t:'1 (Hemma)',p:m.ph},{t:'X (Kryss)',p:m.pd},{t:'2 (Borta)',p:m.pa}];
+    const best=evs.sort((a,b)=>b.p-a.p)[0];
+    const o=best.t.includes('Hemma')?m.oh:best.t.includes('Kryss')?m.od:m.oa;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--sub)">${m.nr}</td><td style="font-weight:500">${m.match}</td><td><span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--green)">${best.t}</span></td><td style="font-family:'Space Mono',monospace;font-size:12px">${(best.p*100).toFixed(0)}%</td><td style="font-family:'Space Mono',monospace;font-size:12px;color:var(--gold)">${o}x</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateKombi(){
+  const KOMBI_ODDS=547.8;
+  [0,1,2].forEach(i=>{
+    const ins=parseFloat(document.getElementById(`k-i${i}`).value)||100;
+    const vin=Math.round(ins*KOMBI_ODDS);
+    const el=document.getElementById(`k-v${i}`);
+    if(el)el.textContent=vin.toLocaleString('sv-SE')+' kr';
+  });
+}
+
+function renderCombined(){
+  const players=getPlayers();
+  const totalsOdds=players.map(()=>0);
+  MATCHES.forEach(m=>{
+    const best=bestSpel(m);
+    if(!best)return;
+    players.forEach((p,i)=>{
+      const k=best.t==='H'?m.kh:best.t==='X'?m.kd:m.ka;
+      totalsOdds[i]+=Math.round(p.bank*k);
+    });
+  });
+  const vmIns=192;
+  const kombiIns=100;
+  document.getElementById('c-stats').innerHTML=`
+    <div class="stat-box"><div class="stat-val">${fmt(totalsOdds[0])}</div><div class="stat-lbl">${players[0].name} odds insats</div></div>
+    <div class="stat-box"><div class="stat-val gold">192 kr</div><div class="stat-lbl">VM-tipset / person</div></div>
+    <div class="stat-box"><div class="stat-val blue">100 kr</div><div class="stat-lbl">Kombibett / person</div></div>
+    <div class="stat-box"><div class="stat-val">${fmt(totalsOdds[0]+vmIns+kombiIns)}</div><div class="stat-lbl">${players[0].name} totalt</div></div>
+  `;
+  document.getElementById('c-grid').innerHTML=players.map((p,i)=>`
+    <div class="comb-player">
+      <div class="cp-name">${p.name}</div>
+      <div class="cp-section">
+        <div class="cp-sec-title">Odds Betting (eget konto)</div>
+        <div class="cp-row"><span class="cp-lbl">Bankroll</span><span class="cp-val">${fmt(p.bank)}</span></div>
+        <div class="cp-row"><span class="cp-lbl">Total Kelly-insats</span><span class="cp-val">${fmt(totalsOdds[i])}</span></div>
+        <div class="cp-row"><span class="cp-lbl">Vinst om allt rätt</span><span class="cp-val" style="color:var(--green)">varierar</span></div>
+      </div>
+      <div class="cp-section">
+        <div class="cp-sec-title">VM-Tipset (eget konto)</div>
+        <div class="cp-row"><span class="cp-lbl">Insats</span><span class="cp-val">192 kr</span></div>
+        <div class="cp-row"><span class="cp-lbl">Jackpot-andel</span><span class="cp-val" style="color:var(--gold)">~2 267 000 kr</span></div>
+        <div class="cp-row"><span class="cp-lbl">12 rätt-andel</span><span class="cp-val">~150 000 kr</span></div>
+      </div>
+      <div class="cp-section">
+        <div class="cp-sec-title">Kombibett (eget konto)</div>
+        <div class="cp-row"><span class="cp-lbl">Insats</span><span class="cp-val">100 kr</span></div>
+        <div class="cp-row"><span class="cp-lbl">Vinst om alla 13 in</span><span class="cp-val" style="color:var(--green)">~54 780 kr</span></div>
+        <div class="cp-row"><span class="cp-lbl">Chans</span><span class="cp-val">~0.3%</span></div>
+      </div>
+      <div class="cp-total">
+        <div class="cp-row"><span class="cp-lbl" style="font-size:12px">TOTAL FAST INSATS</span><span class="cp-val" style="color:var(--gold);font-size:15px;font-weight:700">${fmt(totalsOdds[i]+vmIns+kombiIns)}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderOdds();
+renderVM();
+</script>
+</body>
+</html>
