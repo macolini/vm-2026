@@ -49,23 +49,26 @@ def get_upcoming_wc_matches():
     headers = {"X-Auth-Token": API_KEY}
     url = "https://api.football-data.org/v4/competitions/WC/matches"
     
-    r = requests.get(url, headers=headers, timeout=15)
-    
-    if r.status_code == 200:
-        data = r.json()
-        upcoming = []
-        for m in data.get("matches", []):
-            if m["status"] in ["SCHEDULED", "TIMED"]:
-                upcoming.append({
-                    "home": m["homeTeam"]["name"],
-                    "away": m["awayTeam"]["name"],
-                    "date": m["utcDate"],
-                    "matchday": m.get("matchday", 0)
-                })
-        print(f"  ✅ {len(upcoming)} kommande matcher hittade")
-        return upcoming
-    else:
-        print(f"  ⚠️  API svarade {r.status_code} — använder cached data")
+    try:
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            upcoming = []
+            for m in data.get("matches", []):
+                if m["status"] in ["SCHEDULED", "TIMED"]:
+                    upcoming.append({
+                        "home": m["homeTeam"]["name"],
+                        "away": m["awayTeam"]["name"],
+                        "date": m["utcDate"],
+                        "matchday": m.get("matchday", 0)
+                    })
+            print(f"  ✅ {len(upcoming)} kommande matcher hittade")
+            return upcoming
+        else:
+            print(f"  ⚠️  API svarade {r.status_code} — använder cached data")
+            return []
+    except Exception as e:
+        print(f"  ⚠️  football-data.org ej nåbart — använder matches_config.json")
         return []
 
 
