@@ -29,12 +29,14 @@ jobs:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
           cd 1 && python3 update.py
-      
       - name: Commit updated files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "VM2026 Bot"
+          git add 1/predictions.json 1/vm2026_dashboard.html 1/matches_config.json
+          git stash
           git pull --rebase origin main
+          git stash pop
           git add 1/predictions.json 1/vm2026_dashboard.html 1/matches_config.json
           git diff --staged --quiet || git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')"
           git push
