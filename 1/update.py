@@ -246,24 +246,27 @@ def predict_match(home, away, profiles, avg_xg):
 
 def get_odds_for_matches(matches):
     """
-    Försöker hämta odds från Svenska Spel.
-    Om det misslyckas — ber användaren mata in dem manuellt.
+    Hämtar odds automatiskt från the-odds-api.com
+    Faller tillbaka på matches_config.json om API ej tillgängligt
     """
-    print("📈 Hämtar odds...")
+    print("📈 Hämtar odds automatiskt...")
     
-    # Prova Svenska Spel
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"}
-        r = requests.get("https://spela.svenskaspel.se/api/sport/1/draws", headers=headers, timeout=10)
-        if r.status_code == 200:
-            print("  ✅ Odds hämtade från Svenska Spel")
-            # Parse och returnera
-            return r.json()
-    except:
-        pass
-    
-    print("  ℹ️  Odds behöver matas in manuellt i matches_config.json")
-    return None
+        from odds_fetcher import get_wc_odds, merge_with_config
+        odds_data = get_wc_odds()
+        if odds_data:
+            config_file = BASE_DIR / "matches_config.json"
+            updated = merge_with_config(odds_data, config_file)
+            with open(config_file, "w", encoding="utf-8") as f:
+                json.dump(updated, f, indent=2, ensure_ascii=False)
+            print("  ✅ matches_config.json uppdaterad med nya odds")
+            return updated
+        else:
+            print("  ℹ️  Använder befintliga odds från matches_config.json")
+            return matches
+    except ImportError:
+        print("  ⚠️  odds_fetcher.py saknas — använder manual odds")
+        return matches
 
 
 # ════════════════════════════════════════
