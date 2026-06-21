@@ -435,9 +435,9 @@ def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     print(f"  ✅ predictions.json uppdaterad med {len(predictions)} matcher")
     
     # Uppdatera MATCHES-konstanten i dashboard HTML
-    dashboard_file = BASE_DIR / "vm2026_dashboard.html"
+    dashboard_file = BASE_DIR / "index.html"
     if not dashboard_file.exists():
-        print("  ⚠️  vm2026_dashboard.html saknas")
+        print("  ⚠️  index.html saknas")
         return
     
     with open(dashboard_file, 'r', encoding='utf-8') as f:
@@ -459,7 +459,7 @@ def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     with open(dashboard_file, 'w', encoding='utf-8') as f:
         f.write(html)
     
-    print(f"  ✅ vm2026_dashboard.html uppdaterad — Omgång {round_num}")
+    print(f"  ✅ index.html uppdaterad — Omgång {round_num}")
 
 
 # ════════════════════════════════════════
@@ -524,7 +524,7 @@ def main():
     
     print()
     print("╔══════════════════════════════════════════════╗")
-    print("║  ✅ KLAR! Öppna vm2026_dashboard.html        ║")
+    print("║  ✅ KLAR! Öppna index.html                   ║")
     print("╚══════════════════════════════════════════════╝")
     print()
 
