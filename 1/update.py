@@ -29,14 +29,65 @@ from datetime import datetime
 # ════════════════════════════════════════
 # CONFIG — ÄNDRA DESSA
 # ════════════════════════════════════════
-API_KEY = "a7af7cd47d64488bafeadd04e33250f7"  # football-data.org
+# OBS: nyckeln läses från miljövariabeln FOOTBALL_API_KEY (GitHub Secret),
+# läggs ALDRIG i klartext i koden — repot är publikt.
+API_KEY = os.environ.get("FOOTBALL_API_KEY", "")
 BANKROLL = 5000          # Standard bankroll kr
 KELLY_FRACTION = 0.25    # 1/4 Kelly
+
+if not API_KEY:
+    print("⚠️  FOOTBALL_API_KEY saknas i miljövariabler — kollar GitHub Secrets / lokal .env")
 
 # Paths
 BASE_DIR = Path(__file__).parent
 CACHE_DIR = BASE_DIR / "xg_cache"
 CACHE_DIR.mkdir(exist_ok=True)
+
+# ════════════════════════════════════════
+# VM-TIPSET OMGÅNGSSCHEMA (Svenska Spel, 2026)
+# ════════════════════════════════════════
+# Källa: spela.svenskaspel.se/fotboll/vm/vm-tipset
+# 5 fasta omgångar med spelstopp 18:59 svensk tid.
+# OBS: om Svenska Spel ändrar datumen måste denna lista uppdateras manuellt.
+VM_TIPSET_ROUNDS = [
+    {"round": 1, "deadline_date": "2026-06-11", "deadline_time": "20:59"},  # premiärdagen, annan stopptid
+    {"round": 2, "deadline_date": "2026-06-17", "deadline_time": "18:59"},
+    {"round": 3, "deadline_date": "2026-06-22", "deadline_time": "18:59"},
+    {"round": 4, "deadline_date": "2026-06-25", "deadline_time": "18:59"},
+    {"round": 5, "deadline_date": "2026-06-29", "deadline_time": "18:59"},
+]
+
+
+def get_current_round_info():
+    """
+    Räknar ut vilken VM-tipset-omgång som är aktuell just nu, och dess deadline.
+
+    Logik: hitta första omgången vars deadline ännu inte passerat.
+    Om alla 5 omgångar är förbi, returnera den sista (VM-tipset är slut).
+
+    Returnerar: (round_num, deadline_str) t.ex. (3, "22 jun 18:59")
+    """
+    now = datetime.now()
+    MONTH_SV = {1: "jan", 2: "feb", 3: "mar", 4: "apr", 5: "maj", 6: "jun",
+                7: "jul", 8: "aug", 9: "sep", 10: "okt", 11: "nov", 12: "dec"}
+
+    for r in VM_TIPSET_ROUNDS:
+        deadline_dt = datetime.strptime(
+            f"{r['deadline_date']} {r['deadline_time']}", "%Y-%m-%d %H:%M"
+        )
+        if now < deadline_dt:
+            deadline_str = f"{deadline_dt.day} {MONTH_SV[deadline_dt.month]} {r['deadline_time']}"
+            return r["round"], deadline_str
+
+    # Alla omgångar har passerat — visa sista omgången som referens
+    last = VM_TIPSET_ROUNDS[-1]
+    deadline_dt = datetime.strptime(
+        f"{last['deadline_date']} {last['deadline_time']}", "%Y-%m-%d %H:%M"
+    )
+    deadline_str = f"{deadline_dt.day} {MONTH_SV[deadline_dt.month]} {last['deadline_time']} (avslutat)"
+    return last["round"], deadline_str
+
+
 
 # ════════════════════════════════════════
 # STEG 1: HÄMTA VM-MATCHER
@@ -451,10 +502,16 @@ def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     import re
     html = re.sub(r'const MATCHES = \[.*?\];', new_matches_js, html, flags=re.DOTALL)
     
-    # Uppdatera omgång och deadline
-    html = html.replace(
-        f'Omgång <strong>{round_num-1 if round_num > 1 else 1}</strong>',
-        f'Omgång <strong>{round_num}</strong>'
+    # Uppdatera omgång och deadline (robust regex — matchar oavsett tidigare värde)
+    html = re.sub(
+        r'Omgång <strong>\d+</strong>',
+        f'Omgång <strong>{round_num}</strong>',
+        html
+    )
+    html = re.sub(
+        r'Stopp <strong>.*?</strong>',
+        f'Stopp <strong>{deadline}</strong>',
+        html
     )
     
     with open(dashboard_file, 'w', encoding='utf-8') as f:
@@ -521,7 +578,9 @@ def main():
     # 6. Uppdatera dashboard
     print()
     print("💾 Uppdaterar dashboard...")
-    update_dashboard(predictions)
+    round_num, deadline = get_current_round_info()
+    print(f"  📅 VM-tipset omgång {round_num}, deadline: {deadline}")
+    update_dashboard(predictions, round_num=round_num, deadline=deadline)
     
     print()
     print("╔══════════════════════════════════════════════╗")
