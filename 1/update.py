@@ -435,7 +435,8 @@ def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     print(f"  ✅ predictions.json uppdaterad med {len(predictions)} matcher")
     
     # Uppdatera MATCHES-konstanten i dashboard HTML
-    dashboard_file = BASE_DIR / "index.html"
+    # index.html ligger i repo-root (inte i 1/) för att GitHub Pages ska kunna serva den
+    dashboard_file = BASE_DIR.parent / "index.html"
     if not dashboard_file.exists():
         print("  ⚠️  index.html saknas")
         return
