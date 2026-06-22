@@ -1,7 +1,7 @@
 {
   "round": 3,
   "deadline": "22 jun 18:59",
-  "updated": "2026-06-22 11:57",
+  "updated": "2026-06-22 12:04",
   "matches": [
     {
       "nr": 1,
@@ -122,13 +122,13 @@
       "prob_d": 0.181,
       "prob_a": 0.134,
       "odds_h": 1.23,
-      "odds_d": 7.0,
+      "odds_d": 6.59,
       "odds_a": 17.5,
       "ev_h": -0.1586,
-      "ev_d": 0.2671,
+      "ev_d": 0.1929,
       "ev_a": 1.3499,
       "kelly_h": 0,
-      "kelly_d": 0.0111,
+      "kelly_d": 0.0086,
       "kelly_a": 0.0205,
       "quality": "full",
       "streckning_h": "?",
