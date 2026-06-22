@@ -325,6 +325,11 @@ def select_matches_for_round(odds_data, round_num, max_matches=13):
     urval — de väljer matcherna manuellt och kan avvika från detta filter.
     """
     start_dt, end_dt = get_round_window(round_num)
+    print(f"     🔍 Fönster för omgång {round_num}: {start_dt} till {end_dt}")
+    print(f"     🔍 Totalt {len(odds_data)} matcher att filtrera, datum sett:")
+    for m in odds_data[:40]:
+        print(f"        {m.get('home','?')} - {m.get('away','?')}: {m.get('date','SAKNAS')}")
+
     in_window = []
 
     for m in odds_data:
