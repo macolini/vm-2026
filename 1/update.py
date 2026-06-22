@@ -294,27 +294,96 @@ def predict_match(home, away, profiles, avg_xg):
     }
 
 
+def get_round_window(round_num):
+    """
+    Räknar ut datumfönstret (start, slut) för en given VM-tipset-omgång.
+    Fönstret är: dagen efter föregående omgångs deadline, till och med denna omgångs deadline.
+    Omgång 1 räknas från VM-start (2026-06-11).
+    """
+    idx = next((i for i, r in enumerate(VM_TIPSET_ROUNDS) if r["round"] == round_num), 0)
+    end_dt = datetime.strptime(
+        f"{VM_TIPSET_ROUNDS[idx]['deadline_date']} {VM_TIPSET_ROUNDS[idx]['deadline_time']}",
+        "%Y-%m-%d %H:%M"
+    )
+    if idx == 0:
+        start_dt = datetime.strptime("2026-06-11 00:00", "%Y-%m-%d %H:%M")
+    else:
+        prev = VM_TIPSET_ROUNDS[idx - 1]
+        start_dt = datetime.strptime(
+            f"{prev['deadline_date']} {prev['deadline_time']}", "%Y-%m-%d %H:%M"
+        )
+    return start_dt, end_dt
+
+
+def select_matches_for_round(odds_data, round_num, max_matches=13):
+    """
+    Filtrerar odds-API-data (som har commence_time) till matcher som
+    spelas inom aktuell omgångs datumfönster. Returnerar max 13 matcher,
+    sorterade på avsparkstid.
+
+    OBS: detta är en BÄST MÖJLIGA approximation av Svenska Spels riktiga
+    urval — de väljer matcherna manuellt och kan avvika från detta filter.
+    """
+    start_dt, end_dt = get_round_window(round_num)
+    in_window = []
+
+    for m in odds_data:
+        date_str = m.get("date", "")
+        if not date_str:
+            continue
+        try:
+            match_dt = datetime.strptime(date_str[:16], "%Y-%m-%dT%H:%M")
+        except ValueError:
+            continue
+        if start_dt <= match_dt <= end_dt:
+            in_window.append(m)
+
+    in_window.sort(key=lambda m: m.get("date", ""))
+    return in_window[:max_matches]
+
+
 # ════════════════════════════════════════
 # STEG 5: ODDS (manuell input eller scraping)
 # ════════════════════════════════════════
 
 def get_odds_for_matches(matches):
     """
-    Hämtar odds automatiskt från the-odds-api.com
-    Faller tillbaka på matches_config.json om API ej tillgängligt
+    Hämtar odds automatiskt från the-odds-api.com.
+    Filtrerar till matcher inom AKTUELL omgångs datumfönster och
+    byter ut hela matchlistan (inte bara merge av odds på gamla lag).
+    Faller tillbaka på befintlig matches_config.json om API ej tillgängligt
+    eller ingen match hittas i fönstret.
     """
     print("📈 Hämtar odds automatiskt...")
-    
+
     try:
-        from odds_fetcher import get_wc_odds, merge_with_config
+        from odds_fetcher import get_wc_odds
         odds_data = get_wc_odds()
         if odds_data:
+            round_num, _ = get_current_round_info()
+            selected = select_matches_for_round(odds_data, round_num)
+
+            if not selected:
+                print(f"  ⚠️  Inga matcher hittades för omgång {round_num} i tidsfönstret")
+                print("  ℹ️  Använder befintliga matcher från matches_config.json")
+                return matches
+
+            # Numrera om 1-N och bygg om configen i samma format som tidigare
+            new_matches = []
+            for i, m in enumerate(selected, start=1):
+                new_matches.append({
+                    "nr": i,
+                    "home": m["home"], "away": m["away"],
+                    "home_sv": m["home_sv"], "away_sv": m["away_sv"],
+                    "odds_h": m["odds_h"], "odds_d": m["odds_d"], "odds_a": m["odds_a"],
+                })
+
             config_file = BASE_DIR / "matches_config.json"
-            updated = merge_with_config(odds_data, config_file)
             with open(config_file, "w", encoding="utf-8") as f:
-                json.dump(updated, f, indent=2, ensure_ascii=False)
-            print("  ✅ matches_config.json uppdaterad med nya odds")
-            return updated
+                json.dump({"matches": new_matches}, f, indent=2, ensure_ascii=False)
+
+            print(f"  ✅ matches_config.json uppdaterad — {len(new_matches)} matcher för omgång {round_num}")
+            return new_matches
         else:
             print("  ℹ️  Använder befintliga odds från matches_config.json")
             return matches
