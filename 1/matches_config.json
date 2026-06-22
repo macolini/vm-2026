@@ -8,7 +8,7 @@
       "away_sv": "Austria",
       "odds_h": 1.52,
       "odds_d": 4.5,
-      "odds_a": 8.25
+      "odds_a": 8.0
     },
     {
       "nr": 2,
@@ -17,7 +17,7 @@
       "home_sv": "Frankrike",
       "away_sv": "Irak",
       "odds_h": 1.11,
-      "odds_d": 13.0,
+      "odds_d": 12.5,
       "odds_a": 34.0
     },
     {
@@ -28,7 +28,7 @@
       "away_sv": "Senegal",
       "odds_h": 2.25,
       "odds_d": 3.55,
-      "odds_a": 3.42
+      "odds_a": 3.46
     },
     {
       "nr": 4,
@@ -36,8 +36,8 @@
       "away": "Algeria",
       "home_sv": "Jordan",
       "away_sv": "Algeriet",
-      "odds_h": 6.71,
-      "odds_d": 4.44,
+      "odds_h": 6.75,
+      "odds_d": 4.45,
       "odds_a": 1.6
     },
     {
@@ -57,7 +57,7 @@
       "home_sv": "England",
       "away_sv": "Ghana",
       "odds_h": 1.23,
-      "odds_d": 6.59,
+      "odds_d": 6.75,
       "odds_a": 17.5
     },
     {
@@ -67,7 +67,7 @@
       "home_sv": "Panama",
       "away_sv": "Kroatien",
       "odds_h": 7.0,
-      "odds_d": 4.16,
+      "odds_d": 4.13,
       "odds_a": 1.58
     },
     {
@@ -96,7 +96,7 @@
       "away": "Canada",
       "home_sv": "Schweiz",
       "away_sv": "Kanada",
-      "odds_h": 2.51,
+      "odds_h": 2.5,
       "odds_d": 3.2,
       "odds_a": 3.39
     },
