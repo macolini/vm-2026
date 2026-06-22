@@ -623,6 +623,12 @@ def main():
         return
     print(f"  ✅ {len(matches)} matcher laddade från config")
     print()
+
+    # 3b. Försök hämta/uppdatera matchlistan automatiskt för AKTUELL omgång
+    # (byter ut gamla omgångens matcher om the-odds-api har färska matcher
+    # inom tidsfönstret — annars behålls matches oförändrad)
+    matches = get_odds_for_matches(matches)
+    print()
     
     # 4. Hämta streckning
     streckning = get_streckning()
