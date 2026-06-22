@@ -317,20 +317,17 @@ def get_round_window(round_num):
 
 def select_matches_for_round(odds_data, round_num, max_matches=13):
     """
-    Filtrerar odds-API-data (som har commence_time) till matcher som
-    spelas inom aktuell omgångs datumfönster. Returnerar max 13 matcher,
-    sorterade på avsparkstid.
+    Väljer de N närmast kommande VM-matcherna räknat från NU,
+    sorterade på avsparkstid. Detta är INTE nödvändigtvis exakt
+    samma matcher som Svenska Spel valt för sitt VM-tipset, men
+    garanterar en fylld lista med aktuella, riktiga VM-matcher
+    och riktiga odds — oavsett var i omgångscykeln vi befinner oss.
 
-    OBS: detta är en BÄST MÖJLIGA approximation av Svenska Spels riktiga
-    urval — de väljer matcherna manuellt och kan avvika från detta filter.
+    Matcher som redan startat/spelats filtreras bort (de saknar
+    värde för betting-syften framåt).
     """
-    start_dt, end_dt = get_round_window(round_num)
-    print(f"     🔍 Fönster för omgång {round_num}: {start_dt} till {end_dt}")
-    print(f"     🔍 Totalt {len(odds_data)} matcher att filtrera, datum sett:")
-    for m in odds_data[:40]:
-        print(f"        {m.get('home','?')} - {m.get('away','?')}: {m.get('date','SAKNAS')}")
-
-    in_window = []
+    now = datetime.now()
+    upcoming = []
 
     for m in odds_data:
         date_str = m.get("date", "")
@@ -340,11 +337,12 @@ def select_matches_for_round(odds_data, round_num, max_matches=13):
             match_dt = datetime.strptime(date_str[:16], "%Y-%m-%dT%H:%M")
         except ValueError:
             continue
-        if start_dt <= match_dt <= end_dt:
-            in_window.append(m)
+        if match_dt > now:
+            upcoming.append(m)
 
-    in_window.sort(key=lambda m: m.get("date", ""))
-    return in_window[:max_matches]
+    upcoming.sort(key=lambda m: m.get("date", ""))
+    print(f"     🔍 {len(upcoming)} kommande matcher hittade (av {len(odds_data)} totalt), tar de {max_matches} närmaste")
+    return upcoming[:max_matches]
 
 
 # ════════════════════════════════════════
