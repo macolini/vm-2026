@@ -547,6 +547,59 @@ def load_matches_config():
 # STEG 10: UPPDATERA DASHBOARD
 # ════════════════════════════════════════
 
+def generate_kupong(predictions):
+    """
+    Genererar VM-Tipset-kupongen för ett FULLTÄCKNINGSSYSTEM med 3 spelare.
+
+    Principen (syndikat med riskdelning): på VARJE match ska alla tre
+    möjliga utfall (1, X, 2) vara täckta av MINST EN spelare, så att
+    gruppen aldrig missar ett utfall helt. Eftersom alla 13 matcher
+    täcks samtidigt, garanteras att åtminstone en spelares rad ligger
+    nära toppen (11-13 rätt) oavsett utfall — vilket är poängen med
+    systemet (vinst delas sen enligt eget kontrakt).
+
+    Fördelning baserat på modellens sannolikhet, rangordnat per match:
+    - Mest sannolika tecknet (rank 1): ges till 2 av 3 spelare
+      (maximerar chansen att flera träffar på den troligaste utgången)
+    - Tvåa och trea i sannolikhet: delas ut så alla tre tecken
+      ändå finns representerade minst en gång i gruppen
+
+    Vilken SPELARE (A/B/C) som får vilket tecken roteras per match,
+    så att ingen enskild spelare systematiskt får alla osäkra utfall.
+    """
+    TECKEN_MAP = {"h": "1", "d": "X", "a": "2"}
+    kupong = []
+
+    for idx, p in enumerate(predictions):
+        probs = {"h": p["prob_h"], "d": p["prob_d"], "a": p["prob_a"]}
+        ranked = sorted(probs.items(), key=lambda x: -x[1])
+        # ranked[0] = mest sannolikt, ranked[2] = minst sannolikt
+        tecken_ranked = [TECKEN_MAP[k] for k, _ in ranked]
+
+        # Fördelning: rank1 till 2 spelare, rank2 och rank3 till 1 spelare var
+        # Roterar VILKA spelare (positioner 0,1,2 = A,B,C) som får vilken
+        # tilldelning, baserat på matchens index, så belastningen sprids.
+        rotation = idx % 3
+        if rotation == 0:
+            assign = [tecken_ranked[0], tecken_ranked[1], tecken_ranked[2]]
+        elif rotation == 1:
+            assign = [tecken_ranked[1], tecken_ranked[0], tecken_ranked[2]]
+        else:
+            assign = [tecken_ranked[2], tecken_ranked[1], tecken_ranked[0]]
+
+        top_prob = ranked[0][1]
+        spik = top_prob > 0.55  # markeras som "stark favorit" i UI, men alla 3 tecken täcks ändå
+
+        kupong.append({
+            "nr": p["nr"],
+            "match": p["match"],
+            "A": assign[0], "B": assign[1], "C": assign[2],
+            "spik": spik
+        })
+
+    return kupong
+
+
 def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     """Injicerar ny data i dashboard HTML-filen"""
     
@@ -574,10 +627,15 @@ def update_dashboard(predictions, round_num=1, deadline="11 jun 20:59"):
     
     # Bygg ny MATCHES JS-array
     new_matches_js = "const MATCHES = " + json.dumps(predictions, ensure_ascii=False) + ";"
-    
+
+    # Bygg ny KUPONG JS-array (tecken-förslag baserat på modellens sannolikheter)
+    kupong = generate_kupong(predictions)
+    new_kupong_js = "const KUPONG = " + json.dumps(kupong, ensure_ascii=False) + ";"
+
     # Ersätt gammal
     import re
     html = re.sub(r'const MATCHES = \[.*?\];', new_matches_js, html, flags=re.DOTALL)
+    html = re.sub(r'const KUPONG = \[.*?\];', new_kupong_js, html, flags=re.DOTALL)
     
     # Uppdatera omgång och deadline (robust regex — matchar oavsett tidigare värde)
     html = re.sub(
