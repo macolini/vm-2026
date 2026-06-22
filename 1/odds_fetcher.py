@@ -83,15 +83,18 @@ TEAM_NAME_SV = {
 
 
 def get_available_sports():
-    """Listar alla tillgängliga sporter för att hitta rätt VM-nyckel"""
+    """Listar tillgängliga FOTBOLLS-VM-sporter för att hitta rätt nyckel"""
     url = f"{BASE_URL}/sports"
     params = {"apiKey": ODDS_API_KEY}
     
     r = requests.get(url, params=params, timeout=15)
     if r.status_code == 200:
         sports = r.json()
-        wc = [s for s in sports if "world_cup" in s.get("key", "").lower() or 
-              "fifa" in s.get("key", "").lower()]
+        # Kräver "soccer" i nyckeln för att utesluta cricket/rugby/etc
+        # som också råkar innehålla "world_cup" i sitt namn
+        wc = [s for s in sports if s.get("key", "").lower().startswith("soccer")
+              and ("world_cup" in s.get("key", "").lower() or "fifa" in s.get("key", "").lower())]
+        print(f"     Hittade {len(wc)} fotbolls-VM-sporter: {[s['key'] for s in wc]}")
         return wc
     return []
 
@@ -120,6 +123,9 @@ def get_wc_odds():
         sport_keys = [s["key"] for s in available] + sport_keys
     
     for sport_key in sport_keys:
+        if not sport_key.startswith("soccer"):
+            continue  # Extra skydd — aldrig acceptera icke-fotbollssporter
+
         url = f"{BASE_URL}/sports/{sport_key}/odds"
         params = {
             "apiKey":    ODDS_API_KEY,
