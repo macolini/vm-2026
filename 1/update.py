@@ -270,7 +270,12 @@ def build_team_profiles(df):
 
 def predict_match(home, away, profiles, avg_xg):
     """Dixon-Coles Poisson prediction"""
-    DEFAULT = {"avg_xg_for": avg_xg * 0.80, "avg_xg_against": avg_xg * 1.10}
+    # OBS: lag som saknas i xG-databasen (oftast VM-debutanter eller lag
+    # som missade 2018/2022) får ett konservativt svagt default-värde,
+    # för att undvika att modellen ger dem orealistiskt höga vinstchanser.
+    # Detta är en approximation — se "quality"-flaggan i predictions för
+    # att identifiera matcher där minst ett lag saknar riktig xG-data.
+    DEFAULT = {"avg_xg_for": avg_xg * 0.40, "avg_xg_against": avg_xg * 1.60}
     
     hp = profiles.get(home, DEFAULT)
     ap = profiles.get(away, DEFAULT)
