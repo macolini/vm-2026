@@ -551,21 +551,23 @@ def generate_kupong(predictions):
     """
     Genererar VM-Tipset-kupongen för ett FULLTÄCKNINGSSYSTEM med 3 spelare.
 
-    Principen (syndikat med riskdelning): på VARJE match ska alla tre
-    möjliga utfall (1, X, 2) vara täckta av MINST EN spelare, så att
-    gruppen aldrig missar ett utfall helt. Eftersom alla 13 matcher
-    täcks samtidigt, garanteras att åtminstone en spelares rad ligger
-    nära toppen (11-13 rätt) oavsett utfall — vilket är poängen med
-    systemet (vinst delas sen enligt eget kontrakt).
+    Principen (syndikat med riskdelning):
+    - SÄKRA matcher (stark favorit, sannolikhet > 55%): alla tre spelare
+      sätter SAMMA enkeltecken (spik) — ingen anledning att gardera när
+      modellen är säker.
+    - OSÄKRA/JÄMNA matcher: varje spelare garderar med FLERA tecken
+      (2 eller 3), konstruerat så att gruppens garderingar TILLSAMMANS
+      täcker alla tre utfall (1, X, 2) utan onödig dubblering — annars
+      slösas täckningskraft som kunde gått till en annan kombination.
 
-    Fördelning baserat på modellens sannolikhet, rangordnat per match:
-    - Mest sannolika tecknet (rank 1): ges till 2 av 3 spelare
-      (maximerar chansen att flera träffar på den troligaste utgången)
-    - Tvåa och trea i sannolikhet: delas ut så alla tre tecken
-      ändå finns representerade minst en gång i gruppen
+    Garderingsbredd per match baseras på hur jämn matchen är:
+    - Näst mest sannolikt utfall > 30%: 2-tecken-gardering (täcker rank1+rank2)
+    - Annars: 3-tecken-gardering (alla spelare täcker alla utfall — helt jämn match)
 
-    Vilken SPELARE (A/B/C) som får vilket tecken roteras per match,
-    så att ingen enskild spelare systematiskt får alla osäkra utfall.
+    Vid 2-teckens-gardering: spelarna roteras så att de två mest
+    sannolika tecknen (rank1, rank2) alltid finns representerade av
+    minst en spelare, men ingen spelare bär det helt osannolika
+    tredje tecknet ensam om det inte behövs för täckning.
     """
     TECKEN_MAP = {"h": "1", "d": "X", "a": "2"}
     kupong = []
@@ -573,22 +575,43 @@ def generate_kupong(predictions):
     for idx, p in enumerate(predictions):
         probs = {"h": p["prob_h"], "d": p["prob_d"], "a": p["prob_a"]}
         ranked = sorted(probs.items(), key=lambda x: -x[1])
-        # ranked[0] = mest sannolikt, ranked[2] = minst sannolikt
-        tecken_ranked = [TECKEN_MAP[k] for k, _ in ranked]
+        tecken_ranked = [TECKEN_MAP[k] for k, _ in ranked]  # [rank1, rank2, rank3]
+        top_prob, second_prob = ranked[0][1], ranked[1][1]
 
-        # Fördelning: rank1 till 2 spelare, rank2 och rank3 till 1 spelare var
-        # Roterar VILKA spelare (positioner 0,1,2 = A,B,C) som får vilken
-        # tilldelning, baserat på matchens index, så belastningen sprids.
-        rotation = idx % 3
-        if rotation == 0:
-            assign = [tecken_ranked[0], tecken_ranked[1], tecken_ranked[2]]
-        elif rotation == 1:
-            assign = [tecken_ranked[1], tecken_ranked[0], tecken_ranked[2]]
+        rotation = idx % 3  # roterar spelarordning per match, sprider belastning
+
+        if top_prob > 0.55:
+            # SPIK — alla tre spelare samma enkeltecken (modellen är säker,
+            # ingen anledning att gardera bort potentiell vinst)
+            t = tecken_ranked[0]
+            assign = [t, t, t]
+            spik = True
+
+        elif second_prob > 0.30:
+            # 2-teckens-gardering, men FULLTÄCKNING ÄR ABSOLUT KRAV:
+            # Spelare 1: enkeltecken på den säkraste gissningen (rank1)
+            # Spelare 2: gardering rank1+rank2 (näst säkraste kombinationen)
+            # Spelare 3: gardering rank1+rank3 — garanterar att det osannolika
+            #            tecknet (rank3) ändå finns representerat i gruppen
+            base = [
+                tecken_ranked[0],
+                f"{tecken_ranked[0]}/{tecken_ranked[1]}",
+                f"{tecken_ranked[0]}/{tecken_ranked[2]}",
+            ]
+            spik = False
+            assign = base[-rotation:] + base[:-rotation] if rotation else base
+
         else:
-            assign = [tecken_ranked[2], tecken_ranked[1], tecken_ranked[0]]
-
-        top_prob = ranked[0][1]
-        spik = top_prob > 0.55  # markeras som "stark favorit" i UI, men alla 3 tecken täcks ändå
+            # Helt jämn match — alla tre utfall ungefär lika sannolika.
+            # Två spelare täcker 2 tecken var (olika par), en spelare täcker
+            # det tredje paret. Tillsammans garanteras 1/X/2 flera gånger om.
+            combos = [
+                f"{tecken_ranked[0]}/{tecken_ranked[1]}",
+                f"{tecken_ranked[1]}/{tecken_ranked[2]}",
+                f"{tecken_ranked[0]}/{tecken_ranked[2]}",
+            ]
+            spik = False
+            assign = combos[-rotation:] + combos[:-rotation] if rotation else combos
 
         kupong.append({
             "nr": p["nr"],
