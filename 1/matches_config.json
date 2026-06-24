@@ -2,133 +2,133 @@
   "matches": [
     {
       "nr": 1,
-      "home": "Portugal",
-      "away": "Uzbekistan",
-      "home_sv": "Portugal",
-      "away_sv": "Uzbekistan",
-      "odds_h": 1.16,
-      "odds_d": 9.0,
-      "odds_a": 21.0
-    },
-    {
-      "nr": 2,
-      "home": "England",
-      "away": "Ghana",
-      "home_sv": "England",
-      "away_sv": "Ghana",
-      "odds_h": 1.21,
-      "odds_d": 7.5,
-      "odds_a": 19.5
-    },
-    {
-      "nr": 3,
-      "home": "Panama",
-      "away": "Croatia",
-      "home_sv": "Panama",
-      "away_sv": "Kroatien",
-      "odds_h": 7.5,
-      "odds_d": 4.45,
-      "odds_a": 1.52
-    },
-    {
-      "nr": 4,
-      "home": "Colombia",
-      "away": "DR Congo",
-      "home_sv": "Colombia",
-      "away_sv": "DR Congo",
-      "odds_h": 1.56,
-      "odds_d": 4.15,
-      "odds_a": 7.0
-    },
-    {
-      "nr": 5,
       "home": "Bosnia & Herzegovina",
       "away": "Qatar",
       "home_sv": "Bosnia & Herzegovina",
       "away_sv": "Qatar",
       "odds_h": 1.42,
-      "odds_d": 5.31,
-      "odds_a": 7.72
+      "odds_d": 5.45,
+      "odds_a": 8.0
     },
     {
-      "nr": 6,
+      "nr": 2,
       "home": "Switzerland",
       "away": "Canada",
       "home_sv": "Schweiz",
       "away_sv": "Kanada",
       "odds_h": 2.45,
-      "odds_d": 3.15,
-      "odds_a": 3.42
+      "odds_d": 3.14,
+      "odds_a": 3.43
     },
     {
-      "nr": 7,
+      "nr": 3,
       "home": "Scotland",
       "away": "Brazil",
       "home_sv": "Skottland",
       "away_sv": "Brasilien",
-      "odds_h": 8.7,
-      "odds_d": 5.43,
-      "odds_a": 1.4
+      "odds_h": 11.0,
+      "odds_d": 5.85,
+      "odds_a": 1.34
     },
     {
-      "nr": 8,
+      "nr": 4,
       "home": "Morocco",
       "away": "Haiti",
       "home_sv": "Marocko",
       "away_sv": "Haiti",
       "odds_h": 1.2,
-      "odds_d": 7.42,
-      "odds_a": 19.5
+      "odds_d": 7.5,
+      "odds_a": 20.0
     },
     {
-      "nr": 9,
+      "nr": 5,
       "home": "Czech Republic",
       "away": "Mexico",
       "home_sv": "Tjeckien",
       "away_sv": "Mexiko",
       "odds_h": 3.85,
-      "odds_d": 4.0,
-      "odds_a": 1.96
+      "odds_d": 4.02,
+      "odds_a": 1.98
     },
     {
-      "nr": 10,
+      "nr": 6,
       "home": "South Africa",
       "away": "South Korea",
       "home_sv": "Sydafrika",
       "away_sv": "Sydkorea",
-      "odds_h": 5.6,
-      "odds_d": 3.84,
-      "odds_a": 1.72
+      "odds_h": 5.65,
+      "odds_d": 4.02,
+      "odds_a": 1.67
     },
     {
-      "nr": 11,
+      "nr": 7,
       "home": "Curaçao",
       "away": "Ivory Coast",
       "home_sv": "Curaçao",
       "away_sv": "Elfenbenskusten",
-      "odds_h": 21.0,
+      "odds_h": 22.0,
       "odds_d": 8.5,
-      "odds_a": 1.16
+      "odds_a": 1.17
     },
     {
-      "nr": 12,
+      "nr": 8,
       "home": "Ecuador",
       "away": "Germany",
       "home_sv": "Ecuador",
       "away_sv": "Tyskland",
-      "odds_h": 3.95,
-      "odds_d": 4.07,
-      "odds_a": 1.92
+      "odds_h": 4.0,
+      "odds_d": 4.26,
+      "odds_a": 1.88
     },
     {
-      "nr": 13,
+      "nr": 9,
       "home": "Japan",
       "away": "Sweden",
       "home_sv": "Japan",
       "away_sv": "Sweden",
-      "odds_h": 1.95,
-      "odds_d": 3.55,
-      "odds_a": 4.38
+      "odds_h": 1.92,
+      "odds_d": 3.65,
+      "odds_a": 4.54
+    },
+    {
+      "nr": 10,
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "home_sv": "Tunisien",
+      "away_sv": "Nederländerna",
+      "odds_h": 29.0,
+      "odds_d": 8.56,
+      "odds_a": 1.13
+    },
+    {
+      "nr": 11,
+      "home": "Paraguay",
+      "away": "Australia",
+      "home_sv": "Paraguay",
+      "away_sv": "Australien",
+      "odds_h": 3.0,
+      "odds_d": 2.28,
+      "odds_a": 4.0
+    },
+    {
+      "nr": 12,
+      "home": "Turkey",
+      "away": "USA",
+      "home_sv": "Turkiet",
+      "away_sv": "USA",
+      "odds_h": 3.7,
+      "odds_d": 4.15,
+      "odds_a": 1.95
+    },
+    {
+      "nr": 13,
+      "home": "Norway",
+      "away": "France",
+      "home_sv": "Norge",
+      "away_sv": "Frankrike",
+      "odds_h": 4.9,
+      "odds_d": 4.5,
+      "odds_a": 1.68
     }
   ]
 }
